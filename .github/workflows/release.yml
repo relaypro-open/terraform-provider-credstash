@@ -1,5 +1,6 @@
 # This GitHub action can publish assets for release when a tag is created.
 # Currently its setup to run on any tag that matches the pattern "v*" (ie. v0.1.0).
+# You can also manually trigger a release by selecting a tag in the GitHub UI.
 #
 # This uses an action (paultyng/ghaction-import-gpg) that assumes you set your 
 # private key in the `GPG_PRIVATE_KEY` secret and passphrase in the `PASSPHRASE`
@@ -10,25 +11,36 @@
 # in `goreleaser` to indicate this is being used in a non-interactive mode.
 #
 name: release
+
 on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g., v0.6.0)'
+        required: true
+        type: string
   push:
     tags:
       - 'v*'
+
+permissions:
+  contents: write
+
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v2
-      -
-        name: Unshallow
-        run: git fetch --prune --unshallow
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+          fetch-depth: 0
       -
         name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
-          go-version: 1.14
+          go-version: '1.16'
       -
         name: Import GPG key
         id: import_gpg
@@ -40,7 +52,7 @@ jobs:
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
-          version: latest
+          version: 'v0.156.2'
           args: release --rm-dist
         env:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}

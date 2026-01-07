@@ -7,7 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/sspinc/terraform-provider-credstash/credstash"
+	"github.com/relaypro-open/terraform-provider-credstash/credstash"
 )
 
 var _ terraform.ResourceProvider = provider()

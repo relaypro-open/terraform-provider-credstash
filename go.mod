@@ -1,4 +1,4 @@
-module github.com/sspinc/terraform-provider-credstash
+module github.com/relaypro-open/terraform-provider-credstash
 
 require (
 	github.com/aws/aws-sdk-go v1.34.5
